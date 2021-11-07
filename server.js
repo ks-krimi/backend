@@ -3,17 +3,28 @@ require("./config/db_conf");
 
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const { graphqlHTTP } = require("express-graphql");
+const { checkUser, requireAuth } = require("./middlewares/auth.middleware");
+const schema = require("./schemas");
 
 // initialise a new express app
 const app = express();
 
+// middlewares
+app.use(express.json());
+app.use(cookieParser());
+
 // use cors middleware
-app.use(
-  cors({
-    origin: process.env.ORIGIN,
-    credentials: true,
-  })
-);
+app.use(cors({ origin: process.env.ORIGIN, credentials: true }));
+
+// auths middlewares
+app.get("*", checkUser);
+app.get("/jwtid", requireAuth, (req, res) => {
+  res.status(200).send(res.locals.user._id);
+});
+
+app.use("/graphql", graphqlHTTP({ schema, graphiql: true }));
 
 // server
 const server = app.listen(process.env.PORT, () => {
