@@ -1,5 +1,7 @@
 const graphql = require("graphql");
-const { users, details, materiels } = require("../data");
+const userModel = require("../models/User");
+const detailModel = require("../models/Detail");
+const materielModel = require("../models/Materiel");
 
 const {
   GraphQLObjectType,
@@ -18,8 +20,9 @@ const DetailType = new GraphQLObjectType({
     marque: { type: GraphQLString },
     materiels: {
       type: new GraphQLList(MaterielType),
-      resolve(parent, args) {
-        return materiels.filter((materiel) => materiel.type === parent.id);
+      resolve: async (parent, args) => {
+        const materiels = await materielModel.find({ detailId: parent.id });
+        return materiels;
       },
     },
   }),
@@ -36,8 +39,9 @@ const UserType = new GraphQLObjectType({
     level: { type: GraphQLInt },
     materiels: {
       type: new GraphQLList(MaterielType),
-      resolve(parent, args) {
-        return materiels.filter((materiel) => materiel.userId === parent.id);
+      resolve: async (parent, args) => {
+        const materiels = await materielModel.find({ userId: parent.id });
+        return materiels;
       },
     },
   }),
@@ -50,14 +54,16 @@ const MaterielType = new GraphQLObjectType({
     serie: { type: GraphQLString },
     detail: {
       type: DetailType,
-      resolve(parent, args) {
-        return details.find((detail) => detail.id === parent.type);
+      resolve: async (parent, args) => {
+        const detail = await detailModel.findById(parent.detailId);
+        return detail;
       },
     },
     user: {
       type: UserType,
-      resolve(parent, args) {
-        return users.find((user) => user.id === parent.userId);
+      resolve: async (parent, args) => {
+        const user = await userModel.findById(parent.userId);
+        return user;
       },
     },
   }),
@@ -68,44 +74,127 @@ const RootQuery = new GraphQLObjectType({
   fields: {
     users: {
       type: new GraphQLList(UserType),
-      resolve(parent, args) {
+      resolve: async (parent, args) => {
+        const users = await userModel.find();
         return users;
       },
     },
     details: {
       type: new GraphQLList(DetailType),
-      resolve(parent, args) {
+      resolve: async (parent, args) => {
+        const details = await detailModel.find();
         return details;
       },
     },
     materiels: {
       type: new GraphQLList(MaterielType),
-      resolve(parent, args) {
+      resolve: async (parent, args) => {
+        const materiels = await materielModel.find();
         return materiels;
       },
     },
     detail: {
       type: DetailType,
       args: { id: { type: GraphQLID } },
-      resolve(parent, args) {
-        return details.find((detail) => detail.id == args.id);
+      resolve: async (parent, args) => {
+        const detail = await detailModel.findById(args.id);
+        return detail;
       },
     },
     materiel: {
       type: MaterielType,
-      args: { serie: { type: GraphQLString } },
-      resolve(parent, args) {
-        return materiels.find((materiel) => materiel.serie === args.serie);
+      args: { id: { type: GraphQLID } },
+      resolve: async (parent, args) => {
+        const materiel = await materielModel.findById(args.id);
+        return materiel;
       },
     },
     user: {
       type: UserType,
       args: { id: { type: GraphQLID } },
-      resolve(parent, args) {
-        return users.find((user) => user.id == args.id);
+      resolve: async (parent, args) => {
+        const user = await userModel.findById(args.id);
+        return user;
       },
     },
   },
 });
 
-module.exports = new GraphQLSchema({ query: RootQuery });
+const Mutation = new GraphQLObjectType({
+  name: "Mutation",
+  fields: {
+    addUser: {
+      type: UserType,
+      args: {
+        nom: { type: GraphQLString },
+        prenom: { type: GraphQLString },
+        email: { type: GraphQLString },
+        password: { type: GraphQLString },
+        level: { type: GraphQLInt },
+      },
+      resolve: async (parent, args) => {
+        const user = await userModel.create({
+          nom: args.nom,
+          prenom: args.prenom,
+          email: args.email,
+          password: args.password,
+          level: args.level,
+        });
+        return user;
+      },
+    },
+    deleteUser: {
+      type: UserType,
+      args: { userId: { type: GraphQLID } },
+      resolve: async (parent, args) => {
+        const user = await userModel.findByIdAndDelete(args.userId);
+        return user;
+      },
+    },
+    addDetail: {
+      type: DetailType,
+      args: { type: { type: GraphQLString }, marque: { type: GraphQLString } },
+      resolve: async (parent, args) => {
+        const detail = await detailModel.create({
+          type: args.type,
+          marque: args.marque,
+        });
+        return detail;
+      },
+    },
+    deleteDetail: {
+      type: DetailType,
+      args: { detailId: { type: GraphQLID } },
+      resolve: async (parent, args) => {
+        const detail = await detailModel.findByIdAndDelete(args.detailId);
+        return detail;
+      },
+    },
+    addMateriel: {
+      type: MaterielType,
+      args: {
+        serie: { type: GraphQLString },
+        detailId: { type: GraphQLID },
+        userId: { type: GraphQLID },
+      },
+      resolve: async (parent, args) => {
+        const materiel = await materielModel.create({
+          serie: args.serie,
+          detailId: args.detailId,
+          userId: args.userId,
+        });
+        return materiel;
+      },
+    },
+    deleteMateriel: {
+      type: MaterielType,
+      args: { materielId: { type: GraphQLID } },
+      resolve: async (parent, args) => {
+        const materiel = await materielModel.findByIdAndDelete(args.materielId);
+        return materiel;
+      },
+    },
+  },
+});
+
+module.exports = new GraphQLSchema({ query: RootQuery, mutation: Mutation });

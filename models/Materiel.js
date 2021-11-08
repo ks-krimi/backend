@@ -1,25 +1,16 @@
 const mongoose = require("mongoose");
-const { isAlpha } = require("validator");
 
 const materielSchema = new mongoose.Schema(
   {
-    marque: {
-      type: String,
-      trim: true,
-      required: true,
-      validate: [isAlpha],
-    },
-    type: {
-      type: String,
-      trim: true,
-      required: true,
-      validate: [isAlpha],
-    },
     serie: {
       type: String,
       trim: true,
       required: true,
-      validate: [isAlpha],
+    },
+    detailId: {
+      type: String,
+      trim: true,
+      required: true,
     },
     userId: {
       type: String,
