@@ -10,6 +10,7 @@ const {
   GraphQLString,
   GraphQLInt,
   GraphQLList,
+  GraphQLNonNull,
 } = graphql;
 
 const DetailType = new GraphQLObjectType({
@@ -143,9 +144,24 @@ const Mutation = new GraphQLObjectType({
         return user;
       },
     },
+    updateUser: {
+      type: UserType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        nom: { type: GraphQLString },
+        prenom: { type: GraphQLString },
+        email: { type: GraphQLString },
+        password: { type: GraphQLString },
+        level: { type: GraphQLInt },
+      },
+      resolve: async (parent, args) => {
+        const user = await userModel.findByIdAndUpdate(args.id, args);
+        return user;
+      },
+    },
     deleteUser: {
       type: UserType,
-      args: { userId: { type: GraphQLID } },
+      args: { userId: { type: new GraphQLNonNull(GraphQLID) } },
       resolve: async (parent, args) => {
         const user = await userModel.findByIdAndDelete(args.userId);
         return user;
@@ -162,9 +178,21 @@ const Mutation = new GraphQLObjectType({
         return detail;
       },
     },
+    updateDetail: {
+      type: DetailType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        type: { type: GraphQLString },
+        marque: { type: GraphQLString },
+      },
+      resolve: async (parent, args) => {
+        const detail = await detailModel.findByIdAndUpdate(args.id, args);
+        return detail;
+      },
+    },
     deleteDetail: {
       type: DetailType,
-      args: { detailId: { type: GraphQLID } },
+      args: { detailId: { type: new GraphQLNonNull(GraphQLID) } },
       resolve: async (parent, args) => {
         const detail = await detailModel.findByIdAndDelete(args.detailId);
         return detail;
@@ -186,9 +214,22 @@ const Mutation = new GraphQLObjectType({
         return materiel;
       },
     },
+    updateMateriel: {
+      type: MaterielType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        serie: { type: GraphQLString },
+        detailId: { type: GraphQLID },
+        userId: { type: GraphQLID },
+      },
+      resolve: async (parent, args) => {
+        const materiel = await materielModelfindByIdAndUpdate(args.id, args);
+        return materiel;
+      },
+    },
     deleteMateriel: {
       type: MaterielType,
-      args: { materielId: { type: GraphQLID } },
+      args: { materielId: { type: new GraphQLNonNull(GraphQLID) } },
       resolve: async (parent, args) => {
         const materiel = await materielModel.findByIdAndDelete(args.materielId);
         return materiel;
