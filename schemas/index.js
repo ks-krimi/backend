@@ -134,14 +134,18 @@ const Mutation = new GraphQLObjectType({
         level: { type: GraphQLInt },
       },
       resolve: async (parent, args) => {
-        const user = await userModel.create({
-          nom: args.nom,
-          prenom: args.prenom,
-          email: args.email,
-          password: args.password,
-          level: args.level,
-        });
-        return user;
+        try {
+          const user = await userModel.create({
+            nom: args.nom,
+            prenom: args.prenom,
+            email: args.email,
+            password: args.password,
+            level: args.level,
+          });
+          return user;
+        } catch (error) {
+          return error;
+        }
       },
     },
     updateUser: {
@@ -223,7 +227,7 @@ const Mutation = new GraphQLObjectType({
         userId: { type: GraphQLID },
       },
       resolve: async (parent, args) => {
-        const materiel = await materielModelfindByIdAndUpdate(args.id, args);
+        const materiel = await materielModel.findByIdAndUpdate(args.id, args);
         return materiel;
       },
     },

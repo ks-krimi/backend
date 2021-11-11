@@ -24,7 +24,20 @@ app.get("/jwtid", requireAuth, (req, res) => {
   res.status(200).send(res.locals.user._id);
 });
 
-app.use("/graphql", graphqlHTTP({ schema, graphiql: true }));
+app.use("/graphql", (req, res) => {
+  graphqlHTTP({
+    schema,
+    graphiql: true,
+    context: { req },
+    customFormatErrorFn: (err) => {
+      return {
+        message: err.message,
+        name: err.name,
+        extensions: err.extensions,
+      };
+    },
+  })(req, res);
+});
 
 // server
 const server = app.listen(process.env.PORT, () => {

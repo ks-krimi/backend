@@ -18,15 +18,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       lowercase: true,
       trim: true,
-      unique: true,
-      required: true,
+      required: false,
       validate: [isEmail],
     },
     password: {
       type: String,
       max: 1024,
-      minlength: 4,
-      required: true,
+      required: false,
     },
     level: {
       type: Number,
@@ -40,7 +38,9 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt();
-  this.password = await bcrypt.hash(this.password, salt);
+  if (this.password) {
+    this.password = await bcrypt.hash(this.password, salt);
+  }
   next();
 });
 
