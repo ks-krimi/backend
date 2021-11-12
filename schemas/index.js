@@ -35,6 +35,7 @@ const UserType = new GraphQLObjectType({
     id: { type: GraphQLID },
     nom: { type: GraphQLString },
     prenom: { type: GraphQLString },
+    fonction: { type: GraphQLString },
     email: { type: GraphQLString },
     password: { type: GraphQLString },
     level: { type: GraphQLInt },
@@ -129,6 +130,7 @@ const Mutation = new GraphQLObjectType({
       args: {
         nom: { type: GraphQLString },
         prenom: { type: GraphQLString },
+        fonction: { type: GraphQLString },
         email: { type: GraphQLString },
         password: { type: GraphQLString },
         level: { type: GraphQLInt },
@@ -138,6 +140,7 @@ const Mutation = new GraphQLObjectType({
           const user = await userModel.create({
             nom: args.nom,
             prenom: args.prenom,
+            fonction: args.fonction,
             email: args.email,
             password: args.password,
             level: args.level,
@@ -154,6 +157,7 @@ const Mutation = new GraphQLObjectType({
         id: { type: new GraphQLNonNull(GraphQLID) },
         nom: { type: GraphQLString },
         prenom: { type: GraphQLString },
+        fonction: { type: GraphQLString },
         email: { type: GraphQLString },
         password: { type: GraphQLString },
         level: { type: GraphQLInt },

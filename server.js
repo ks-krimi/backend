@@ -31,7 +31,7 @@ app.use("/api/user", userRoutes);
 app.use("/graphql", (req, res) => {
   graphqlHTTP({
     schema,
-    graphiql: true,
+    graphiql: false,
     context: { req },
     customFormatErrorFn: (err) => {
       return {
