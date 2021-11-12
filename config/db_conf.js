@@ -1,11 +1,14 @@
 const mongoose = require("mongoose");
 
 mongoose.connect(
-  "mongodb://localhost:27017/" + process.env.DB_NAME,
+  `${process.env.MONGO_URI}`,
   { useNewUrlParser: true, useUnifiedTopology: true },
   (err) => {
-    if (!err)
-      console.log("Mongodb connected: DB NAME = " + process.env.DB_NAME);
-    else console.log("Connetion error : " + err);
+    if (!err) {
+      console.log(
+        "Le serveur est connecté à la base de données: " +
+          process.env.MONGO_URI.split("/")[3]
+      );
+    } else console.log("Connetion error : " + err);
   }
 );

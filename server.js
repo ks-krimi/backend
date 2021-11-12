@@ -6,6 +6,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { graphqlHTTP } = require("express-graphql");
 const { checkUser, requireAuth } = require("./middlewares/auth.middleware");
+const userRoutes = require("./routes/user.routes");
 const schema = require("./schemas");
 
 // initialise a new express app
@@ -24,6 +25,9 @@ app.get("/jwtid", requireAuth, (req, res) => {
   res.status(200).send(res.locals.user._id);
 });
 
+// routes
+app.use("/api/user", userRoutes);
+
 app.use("/graphql", (req, res) => {
   graphqlHTTP({
     schema,
@@ -41,7 +45,7 @@ app.use("/graphql", (req, res) => {
 
 // server
 const server = app.listen(process.env.PORT, () => {
-  console.log(`Server listen on port ${process.env.PORT}`);
+  console.log(`Le serveur est écouté sur le port: ${process.env.PORT}`);
 });
 
 // handle when there has an error
