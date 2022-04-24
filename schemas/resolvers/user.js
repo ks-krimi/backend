@@ -29,5 +29,45 @@ export default {
 
       return user
     }
+  },
+
+  Mutation: {
+    addUser: async (_, { addUserFields }, context, info) => {
+      return await User.create(addUserFields)
+    },
+
+    updateUser: async (_, { id, updateUserFields }, context, info) => {
+      const isObjectIdOrHexString = mongoose.isValidObjectId(id)
+
+      if (!isObjectIdOrHexString) {
+        throw new UserInputError('Invalid input value')
+      }
+
+      const user = await User.findById(id)
+
+      if (!user) {
+        throw new UserInputError('Invalid input value')
+      }
+
+      return await User.findByIdAndUpdate(id, updateUserFields)
+    },
+
+    deleteUser: async (_, { id }, context, info) => {
+      const isObjectIdOrHexString = mongoose.isValidObjectId(id)
+
+      if (!isObjectIdOrHexString) {
+        throw new UserInputError('Invalid input value')
+      }
+
+      const user = await User.findById(id)
+
+      if (!user) {
+        throw new UserInputError('Invalid input value')
+      }
+
+      await User.findByIdAndDelete(id)
+
+      return user.id
+    }
   }
 }

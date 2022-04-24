@@ -8,12 +8,36 @@ export default gql`
     fonction: String
     email: String
     password: String
-    level: Int!
+    level: Int
     materiels: [Materiel!]
+  }
+
+  input AddUserInput {
+    nom: String!
+    prenom: String!
+    fonction: String!
+    email: String!
+    password: String!
+    level: Int
+  }
+
+  input UpdateUserInput {
+    nom: String
+    prenom: String
+    fonction: String
+    email: String
+    password: String
+    level: Int
   }
 
   extend type Query {
     users: [User!]
     user(id: ID!): User
+  }
+
+  extend type Mutation {
+    addUser(addUserFields: AddUserInput!): User!
+    updateUser(id: ID!, updateUserFields: UpdateUserInput): User!
+    deleteUser(id: ID!): ID!
   }
 `
