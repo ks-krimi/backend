@@ -18,6 +18,7 @@ export default gql`
     serie: String!
     detail: Detail
     user: User
+    technicien: Technicien
     status: AllowedStatus
   }
 

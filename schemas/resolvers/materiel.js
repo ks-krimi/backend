@@ -22,6 +22,9 @@ export default {
     },
     user: async (materiel) => {
       return await User.findById(materiel.userId)
+    },
+    technicien: async (technicien) => {
+      return await Technicien.findById(technicien.technicienId)
     }
   },
 

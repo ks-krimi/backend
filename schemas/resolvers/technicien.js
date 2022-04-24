@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { UserInputError } from 'apollo-server-express'
 import Technicien from '../../models/Technicien'
 import Materiel from '../../models/Materiel'
+import attemptExistingDoc from '../../utils/attemptExistingDoc'
 
 export default {
   Technicien: {
@@ -22,6 +23,30 @@ export default {
       }
 
       return await Technicien.findById(args.id)
+    }
+  },
+
+  Mutation: {
+    addTechnicien: async (_, { addTechnicienFields }, context, info) => {
+      return await Technicien.create(addTechnicienFields)
+    },
+    updateTechnicien: async (
+      _,
+      { id, updateTechnicienFields },
+      context,
+      info
+    ) => {
+      await attemptExistingDoc(Technicien, id)
+      const technicien = await Technicien.findByIdAndUpdate(
+        id,
+        updateTechnicienFields
+      )
+      return technicien
+    },
+    deleteTechnicien: async (_, { id }, context, info) => {
+      await attemptExistingDoc(Technicien, id)
+      const technicien = await Technicien.findByIdAndDelete(id)
+      return technicien.id
     }
   }
 }
