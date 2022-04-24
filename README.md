@@ -27,6 +27,21 @@
 
 ![Alt text](./screenshot.png "Screenshot")
 
+---
+
+### Taper cette commande pour créer un compte Adiministrateur
+
+- `level`:`1` laisse le comme ça (1: role administateur)
+- `email`:`votre email`
+- `nom`:`votre nom`
+- `prenom`:`votre prenom`
+- `password`:`votre mot de passe`
+
+```sh
+curl -v -X POST localhost:8000/api/user/register -H 'Content-Type: application/json' \
+    -d '{ "level":"1", "email": "admin@gmail.com", "nom": "Fanomezantsoa", "prenom":"Herifiandry Marc Nico", "password": "secret123"}'
+```
+
 💻 Made by Fanomezantsoa Herifiandry Marc Nico, 12 novembre 2021 at 14h 34min. Free to use
 
 Email: ny.kalash@gmail.com
