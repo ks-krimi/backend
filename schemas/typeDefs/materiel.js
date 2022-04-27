@@ -44,7 +44,7 @@ export default gql`
     serie: String
     detailId: ID
     userId: ID
-    technicienId: String
+    technicienId: ID
     status: String
   }
 

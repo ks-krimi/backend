@@ -16,8 +16,8 @@ export default gql`
     nom: String!
     prenom: String!
     fonction: String!
-    email: String!
-    password: String!
+    email: String
+    password: String
     level: Int
   }
 
