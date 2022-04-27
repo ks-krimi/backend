@@ -20,6 +20,8 @@ module.exports.register = async (req, res) => {
       password,
       level
     })
+    const token = await createToken(user._id)
+    res.cookie('jwt', token, { httpOnly: true, maxAge })
     res.status(201).json({ user: user._id })
   } catch (err) {
     const errors = errorsRegister(err)
@@ -43,5 +45,5 @@ module.exports.login = async (req, res) => {
 
 module.exports.logout = async (req, res) => {
   res.cookie('jwt', '', { maxAge: 1 })
-  res.status(301).redirect("/");
+  res.status(301).redirect('/')
 }
